@@ -1,0 +1,9 @@
+# python files
+*.py[cod]
+__pycache__/
+
+# django files
+migrations/
+
+# project files
+service/db.sqlite3
