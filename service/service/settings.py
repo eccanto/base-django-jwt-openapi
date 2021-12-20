@@ -122,3 +122,5 @@ moneyed.add_currency(
 )
 
 CURRENCIES = ('USD', 'ARS')
+
+EXCHANGE_USD = 'https://www.dolarsi.com/api/api.php?type=valoresprincipales'

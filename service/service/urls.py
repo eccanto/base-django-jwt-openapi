@@ -1,12 +1,11 @@
 from django.contrib import admin
-from django.urls import path, re_path, include
+from django.urls import include, path, re_path
 from django.views.generic import TemplateView
 from rest_framework import routers
 from rest_framework.schemas import get_schema_view
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
-from rest_framework.renderers import JSONOpenAPIRenderer
 
-from ecommerce.views import ProductViewSet, OrderViewSet, OrderDetailViewSet
+from ecommerce.views import OrderDetailViewSet, OrderViewSet, ProductViewSet
 
 
 router = routers.DefaultRouter()

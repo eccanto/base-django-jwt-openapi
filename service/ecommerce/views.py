@@ -1,26 +1,20 @@
 import json
 from datetime import datetime
 from decimal import Decimal
-from collections import defaultdict
 
 import requests
 from django.db import transaction
-from django.db.models import Sum, F
+from django.db.models import F, Sum
 from django.shortcuts import get_object_or_404
-from djmoney.money import Money
-
-from rest_framework import viewsets, status
+from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from rest_framework.views import APIView
-from rest_framework.schemas.openapi import AutoSchema
 
+from service import settings
 from service.views import ApiVersioning
 from ecommerce.models import Product, Order, OrderDetail
-from ecommerce.serializers import (
-    ProductSerializer, OrderSerializer, OrderDetailSerializer, ApiProductsOrderSerializer,
-    ApiTotalMoneySerializer
-)
+from ecommerce.serializers import (ApiProductsOrderSerializer, ApiTotalMoneySerializer,
+                                   OrderDetailSerializer, OrderSerializer, ProductSerializer)
 from ecommerce.schemes import CustomOrderSchema, ApiVersioningSchema
 
 
@@ -39,8 +33,7 @@ class OrderViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=['post'])
     def register_order(self, request, version=None):
-        """Register a order.
-        """
+        """Register a order."""
         data_serializer = ApiProductsOrderSerializer(data=request.data)
         data_serializer.is_valid(raise_exception=True)
 
@@ -85,8 +78,7 @@ class OrderViewSet(viewsets.ModelViewSet):
 
     @action(detail=True, methods=['put'])
     def update_order(self, request, pk=None, version=None):
-        """Update a order.
-        """
+        """Update a order."""
         data_serializer = ApiProductsOrderSerializer(data=request.data)
         data_serializer.is_valid(raise_exception=True)
 
@@ -148,18 +140,16 @@ class OrderViewSet(viewsets.ModelViewSet):
 
     @action(detail=True, methods=['post'])
     def get_total(self, request, pk=None, version=None):
-        """Obtain invoice data.
-        """
+        """Obtain invoice data."""
         order = get_object_or_404(Order, pk=pk)
         return Response({'total': self._get_total(order)}, status=status.HTTP_200_OK)
 
     @action(detail=True, methods=['post'])
     def get_total_usd(self, request, pk=None, version=None):
-        """Obtain invoice data BLUE.
-        """
+        """Obtain invoice data USD BLUE."""
         order = get_object_or_404(Order, pk=pk)
         try:
-            resp_dolar = requests.get('https://www.dolarsi.com/api/api.php?type=valoresprincipales')
+            resp_dolar = requests.get(settings.EXCHANGE_USD)
             resp_dolar.raise_for_status()
 
             data = resp_dolar.json()

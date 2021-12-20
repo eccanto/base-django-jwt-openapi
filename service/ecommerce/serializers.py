@@ -1,7 +1,7 @@
-from rest_framework import serializers
 from djmoney.contrib.django_rest_framework import MoneyField
+from rest_framework import serializers
 
-from ecommerce.models import Product, Order, OrderDetail
+from ecommerce.models import Order, OrderDetail, Product
 
 
 class ProductSerializer(serializers.ModelSerializer):

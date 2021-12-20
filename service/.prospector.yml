@@ -1,0 +1,61 @@
+# the configuration of the tools can be found in this file and in pyproject.toml
+strictness: veryhigh
+test-warnings: true
+doc-warnings: false
+member-warnings: true
+inherits:
+  - default
+ignore-paths:
+  - docs
+ignore-patterns:
+  - __pycache__
+  - migrations
+autodetect: true
+max-line-length: 100
+
+bandit:
+  run: true
+
+dodgy:
+  run: true
+
+mccabe:
+  run: true
+  options:
+    max-complexity: 7
+
+pep8:
+  run: true
+  full: true
+  disable: []
+
+pep257:
+  run: true
+  disable:
+    - D100
+    - D101
+    - D102
+    - D103
+    - D104
+    - D106
+    - D107
+
+pyflakes:
+  run: true
+  disable:
+    - F811
+
+pylint:
+  run: false
+
+pyroma:
+  run: true
+
+mypy:
+  run: true
+
+vulture:
+  run: false
+
+frosted:
+  run: false

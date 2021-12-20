@@ -1,0 +1,58 @@
+# the configuration of the tools can be found in this file and in .prospector.yml
+[tool.black]
+check = true
+diff = true
+line-length = 100
+skip-string-normalization = true
+exclude = [
+    "migrations"
+]
+
+[tool.isort]
+line_length = 100
+indent = '    '
+lines_after_imports = 2
+skip = [
+    "migrations"
+]
+
+[tool.mypy]
+# already tested by pylint
+disable_error_code = "no-redef"
+
+# flags
+disallow_untyped_decorators = false
+ignore_missing_imports = true
+warn_unused_configs = true
+disallow_untyped_calls = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+check_untyped_defs = true
+no_implicit_optional = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+no_implicit_reexport = true
+strict_equality = true
+
+[tool.pylint.MASTER]
+load-plugins = "pylint_django"
+
+init-hook='import sys; sys.path.append(".")'
+
+[tool.pylint.BASIC]
+good-names = [
+    "i",
+    "j",
+    "pk",
+    "xs",
+    "ys"
+]
+
+[tool.pylint.'MESSAGES CONTROL']
+disable = [
+    "locally-disabled",
+    "missing-class-docstring",
+    "missing-function-docstring",
+    "missing-module-docstring",
+    "too-few-public-methods"
+]
