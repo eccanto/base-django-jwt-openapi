@@ -1,6 +1,6 @@
 # Overview
 
-Basic project about an e-commerce REST API using:
+Basic project about an e-commerce REST API:
 
 **`Class diagram`**:
 
