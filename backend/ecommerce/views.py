@@ -27,7 +27,6 @@ class ProductViewSet(viewsets.ModelViewSet):
     versioning_class = ApiVersioning
     schema = ApiVersioningSchema(tags=['product'])
 
-x = 2
 
 class OrderViewSet(viewsets.ModelViewSet):
     queryset = Order.objects.all()

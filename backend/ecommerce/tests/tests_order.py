@@ -121,9 +121,9 @@ class OrderTestCase(BaseApiTestCase):
         order = Order.objects.get(id=order_id)
         products = Product.objects.filter(orderdetail__in=order.orderdetail_set.all())
 
-        self.assertListEqual(
-            [str(p.id) for p in products],
-            [self.products[0]['id'], self.products[1]['id']]
+        self.assertSetEqual(
+            {str(p.id) for p in products},
+            {self.products[0]['id'], self.products[1]['id']}
         )
 
         for product in products:

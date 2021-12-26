@@ -1,4 +1,4 @@
-version: "3.7"
+version: "3.8"
 
 x-logging: &default-logging
   driver: "json-file"
@@ -19,8 +19,6 @@ services:
   backend:
     build: ./backend
     restart: always
-    volumes:
-      - ./backend:/opt/backend
     ports:
       - "8000:8000"
     depends_on:
@@ -30,6 +28,8 @@ services:
     env_file:
       - .env
     command: bash -c "python3 manage.py runserver 0.0.0.0:8000"
+    volumes:
+      - ./backend:/opt/service
     logging: *default-logging
 
   nginx:

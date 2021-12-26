@@ -148,7 +148,8 @@ docker-compose exec backend python manage.py test
 Checkers statically analyzes the code to find problems.
 
 ```bash
-docker-compose exec backend bash code_checkers.sh  # run shellcheck, pylint, prospector, black and isort
+# run shellcheck, pylint, prospector, black and isort
+docker-compose exec backend bash code_checkers.sh
 ```
 
 Tools used:
