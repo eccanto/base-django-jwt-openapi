@@ -1,0 +1,53 @@
+version: "3.7"
+
+x-logging: &default-logging
+  driver: "json-file"
+  options:
+    max-size: "25m"
+    max-file: "10"
+
+services:
+  database:
+    image: postgres:14.1
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: postgres
+    networks:
+      - internal_net
+    logging: *default-logging
+
+  backend:
+    build: ./backend
+    restart: always
+    volumes:
+      - ./backend:/opt/backend
+    ports:
+      - "8000:8000"
+    depends_on:
+      - database
+    networks:
+      - internal_net
+    env_file:
+      - .env
+    command: bash -c "python3 manage.py runserver 0.0.0.0:8000"
+    logging: *default-logging
+
+  nginx:
+    image: nginx:1.21.4
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/log:/var/log/nginx/
+      - ./nginx/config/nginx/conf.d:/etc/nginx/conf.d
+      - ./nginx/certificates:/etc/nginx/certificates
+    depends_on:
+      - backend
+    networks:
+      - internal_net
+    logging: *default-logging
+
+networks:
+  internal_net:
+    driver: bridge

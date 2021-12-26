@@ -39,6 +39,7 @@ pep257:
     - D104
     - D106
     - D107
+    - D212
 
 pyflakes:
   run: true
