@@ -4,7 +4,7 @@ Basic project about an e-commerce REST API:
 
 **`Class diagram`**:
 
-![Models](./docs/models.png "Class diagram")
+![Models](./docs/design/models.png "Class diagram")
 
 **`Components`**:
 
@@ -23,7 +23,7 @@ Basic project about an e-commerce REST API:
 * [Get started](#get-started)
   * [Installation](#installation)
 * [How to use this REST API](#how-to-use-this-rest-api)
-* [Developers](#developerss)
+* [Developers](#developers)
   * [Testing](#testing)
   * [Static code analysis tools](#static-code-analysis-tools)
     * [Find Problems](#find-problems)
@@ -41,16 +41,23 @@ bash install.sh
 Here are some examples of how to use the Rest API: https://localhost/swagger-ui/
 ([jq](https://stedolan.github.io/jq/) is required)
 
+## Set environment variables from .env file
+
+```bash
+export $(grep -v '^#' .env | xargs)
+```
+
 ## Get authentication token:
+
 ```bash
 JWT_TOKEN=$(
-    curl -s -X POST \
-        'http://localhost:8083/api/token/' \
+    curl -k -s -X POST \
+        'https://localhost/api/token/' \
         -H 'Content-Type: application/json' \
-        -d '{
-            "username": "admin",
-            "password": "admin"
-        }' \
+        -d "{
+            \"username\": \"${DJANGO_SUPERUSER_USERNAME}\",
+            \"password\": \"${DJANGO_SUPERUSER_PASSWORD}\"
+        }" \
     | jq -r '.access'
 ) && echo "JWT token: ${JWT_TOKEN}"
 ```
@@ -59,8 +66,8 @@ JWT_TOKEN=$(
 
 ```bash
 PRODUCT_ID=$(
-    curl -s -X POST \
-        'http://localhost:8083/api/v1/product/' \
+    curl -k -s -X POST \
+        'https://localhost/api/v1/product/' \
         -H 'Content-Type: application/json' \
         -H "Authorization: Bearer ${JWT_TOKEN}" \
         -d '{
@@ -76,8 +83,8 @@ PRODUCT_ID=$(
 
 **PUT**
 ```bash
-curl -s -X PUT \
-    "http://localhost:8083/api/v1/product/${PRODUCT_ID}/" \
+curl -k -s -X PUT \
+    "https://localhost/api/v1/product/${PRODUCT_ID}/" \
     -H 'Content-Type: application/json' \
     -H "Authorization: Bearer ${JWT_TOKEN}" \
     -d '{
@@ -89,8 +96,8 @@ curl -s -X PUT \
 
 **PATCH**
 ```bash
-curl -s -X PATCH \
-    "http://localhost:8083/api/v1/product/${PRODUCT_ID}/" \
+curl -k -s -X PATCH \
+    "https://localhost/api/v1/product/${PRODUCT_ID}/" \
     -H 'Content-Type: application/json' \
     -H "Authorization: Bearer ${JWT_TOKEN}" \
     -d '{
@@ -98,45 +105,15 @@ curl -s -X PATCH \
     }' | jq
 ```
 
-## Get a product
-```bash
-curl -s -X GET \
-    "http://localhost:8083/api/v1/product/${PRODUCT_ID}/" \
-    -H "Authorization: Bearer ${JWT_TOKEN}" | jq
-```
+## More cases
 
-## Delete a product
-```bash
-curl -s -X DELETE \
-    "http://localhost:8083/api/v1/product/${PRODUCT_ID}/" \
-    -H "Authorization: Bearer ${JWT_TOKEN}"
-```
+**`Swagger UI`**: https://localhost/swagger-ui/
 
-## Get product list
+![specs](./docs/images/swagger-ui-general.png "Swagger UI")
 
-```bash
-curl -s -X GET \
-  'http://localhost:8083/api/v1/product/' \
-  -H "Authorization: Bearer ${JWT_TOKEN}" \
-  | jq
-```
+product list:
 
-## Edit stock of a product
-
-```bash
-curl -s -X PATCH \
-    "http://localhost:8083/api/v1/product/${PRODUCT_ID}/" \
-    -H 'Content-Type: application/json' \
-    -H "Authorization: Bearer ${JWT_TOKEN}" \
-    -d '{
-        "stock": 5
-    }' | jq
-```
-
-## Register an order
-
-**`TODO`**
-
+![specs](./docs/images/swagger-ui-product-list.png "Swagger UI - Product list")
 
 # Developers
 
@@ -160,7 +137,7 @@ docker-compose exec backend bash code_checkers.sh
 ```
 
 Tools used:
-- [shellcheck](https://github.com/koalaman/shellcheck): ShellCheck is a GPLv3 tool that gives warnings and suggestions for bash/sh shell scripts
+- [shellcheck](https://github.com/koalaman/shellcheck): ShellCheck is a GPLv3 tool that gives warnings and suggestions for bash/sh shell scripts.
 - [pylint](https://github.com/PyCQA/pylint): Pylint is a Python static code analysis tool which looks for programming errors, helps enforcing a coding standard, sniffs for code smells and offers simple refactoring suggestions.
 - [black](https://github.com/psf/black): Black is the uncompromising Python code formatter.
 - [isort](https://pycqa.github.io/isort/): Python utility / library to sort imports alphabetically, and automatically separated into sections and by type.
