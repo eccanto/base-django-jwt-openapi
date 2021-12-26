@@ -11,3 +11,6 @@ migrations/
 # project files
 .env
 backend/db.sqlite3
+
+# nginx
+nginx/log/

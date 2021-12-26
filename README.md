@@ -139,7 +139,6 @@ run backend unit testing:
 
 ```bash
 docker-compose exec backend python manage.py test
-./manage.py test
 ```
 
 ## Static code analysis tools
@@ -149,11 +148,11 @@ docker-compose exec backend python manage.py test
 Checkers statically analyzes the code to find problems.
 
 ```bash
-cd backend/
-bash code_checkers.sh  # run pylint, prospector, black and isort
+docker-compose exec backend bash code_checkers.sh  # run shellcheck, pylint, prospector, black and isort
 ```
 
 Tools used:
+- [shellcheck](https://github.com/koalaman/shellcheck): ShellCheck is a GPLv3 tool that gives warnings and suggestions for bash/sh shell scripts
 - [pylint](https://github.com/PyCQA/pylint): Pylint is a Python static code analysis tool which looks for programming errors, helps enforcing a coding standard, sniffs for code smells and offers simple refactoring suggestions.
 - [black](https://github.com/psf/black): Black is the uncompromising Python code formatter.
 - [isort](https://pycqa.github.io/isort/): Python utility / library to sort imports alphabetically, and automatically separated into sections and by type.
