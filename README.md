@@ -1,6 +1,13 @@
 # Overview
 
 Basic project about an e-commerce REST API using:
+
+**`Class diagram`**:
+
+![Models](./docs/models.png "Class diagram")
+
+**`Components`**:
+
 - REST API (backend):
     - [Django](https://www.djangoproject.com/) 4.0
     - [Django REST Framework](http://www.django-rest-framework.org/)
@@ -10,11 +17,6 @@ Basic project about an e-commerce REST API using:
     - [PostgreSQL](https://www.postgresql.org/) 14.1
 - Web Server:
     - [NGINX](https://www.nginx.com/) 1.21.4
-
-**`Class diagram`**:
-
-![Models](./docs/models.png "Class diagram")
-
 
 # Table of contents
 
