@@ -2,11 +2,18 @@
 
 set -euo pipefail
 
+RED="31"
 GREEN="32"
+BOLDRED="\e[1;${RED}m"
 BOLDGREEN="\e[1;${GREEN}m"
 ENDCOLOR="\e[0m"
 
 DEPLOY_ENV=.env
+
+if ! command -v pwgen &> /dev/null; then
+    echo -e "${BOLDRED}pwgen could not be found${ENDCOLOR}"
+    exit 1
+fi
 
 if [[ ! -f "$DEPLOY_ENV" ]]; then
     echo "generating new .env file..."

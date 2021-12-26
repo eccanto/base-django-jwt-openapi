@@ -1,0 +1,19 @@
+@startuml
+class Product {
+    +id : UUID
+    +name : String
+    +price : Price
+    +stock : Integer
+}
+
+class Order {
+    +date_time : Date
+}
+
+class OrderDetail {
+    +cuantity : Integer
+}
+
+Order "1" *-- "N" OrderDetail
+Product "1" *-- "N" OrderDetail
+@enduml

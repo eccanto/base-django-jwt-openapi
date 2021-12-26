@@ -11,6 +11,11 @@ Basic project about an e-commerce REST API using:
 - Web Server:
     - [NGINX](https://www.nginx.com/) 1.21.4
 
+**`Class diagram`**:
+
+![Models](./docs/models.png "Class diagram")
+
+
 # Table of contents
 
 * [Get started](#get-started)
