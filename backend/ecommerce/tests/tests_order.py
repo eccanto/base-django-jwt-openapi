@@ -1,39 +1,18 @@
-from django.contrib.auth.models import User
-from django.test import TestCase
+from typing import Any, Dict, List, Union
+
 from rest_framework import status
 from rest_framework.test import APIClient
 
 from ecommerce.models import Order, OrderDetail, Product
+from ecommerce.tests.base_api_testcase import BaseApiTestCase
 
 
-class OrderTestCase(TestCase):
-    def setUp(self):
-        self.username = 'testing_order_usernamme'
-        self.password = 'testing_order_password'
-        self.api_version = 'v1'
-
-        user = User(
-            email='test@test.com',
-            first_name='Testing',
-            last_name='Testing',
-            username=self.username
-        )
-        user.set_password(self.password)
-        user.save()
-
-        self.user = user
-
-        client = APIClient()
-        response = client.post(
-            '/api/token/',
-            {'username': self.username, 'password': self.password},
-            format='json'
-        )
-
-        self.access_token = response.json()['access']
+class OrderTestCase(BaseApiTestCase):
+    def setUp(self) -> None:  # pylint: disable=invalid-name
+        super().setUp()
 
         # create producs
-        self.products = [
+        self.products: List[Dict[str, Union[str, int]]] = [
             {
                 'name': 'product 1',
                 'price': '200',
@@ -66,20 +45,7 @@ class OrderTestCase(TestCase):
             }
         ]
 
-    def _create_product(self, **kwargs):
-        client = APIClient()
-        client.credentials(HTTP_AUTHORIZATION=f'Bearer {self.access_token}')
-
-        response = client.post(
-            f'/api/{self.api_version}/product/',
-            kwargs,
-            format='json'
-        )
-
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        return response.json()
-
-    def _create_order(self):
+    def _create_order(self) -> Dict[str, Any]:
         client = APIClient()
         client.credentials(HTTP_AUTHORIZATION=f'Bearer {self.access_token}')
 
@@ -92,7 +58,7 @@ class OrderTestCase(TestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         return response.json()
 
-    def test_register_order(self):
+    def test_register_order(self) -> None:
         # check request
         resp_data = self._create_order()
         self.assertEqual(len(resp_data), 2)
@@ -115,10 +81,14 @@ class OrderTestCase(TestCase):
                 None
             )
             product_test = next((p for p in self.products if p['id'] == str(product.id)), None)
+            self.assertIsNotNone(product_test)
+            self.assertIsNotNone(product_order)
+            self.assertEqual(
+                product.stock,
+                product_test['stock'] - product_order['cuantity']  # type: ignore
+            )
 
-            self.assertEqual(product.stock, product_test['stock'] - product_order['cuantity'])
-
-    def test_edit_order(self):
+    def test_edit_order(self) -> None:
         order_update = [
             {
                 'cuantity': 2,
@@ -161,9 +131,14 @@ class OrderTestCase(TestCase):
             if product_order:
                 product_test = next((p for p in self.products if p['id'] == str(product.id)), None)
 
-                self.assertEqual(product.stock, product_test['stock'] - product_order['cuantity'])
+                self.assertIsNotNone(product_test)
+                self.assertIsNotNone(product_order)
+                self.assertEqual(
+                    product.stock,
+                    product_test['stock'] - product_order['cuantity']  # type: ignore
+                )
 
-    def test_delete_order(self):
+    def test_delete_order(self) -> None:
         # send order
         resp_data = self._create_order()
         order_id = resp_data['id']
@@ -183,23 +158,24 @@ class OrderTestCase(TestCase):
         self.assertEqual(response.content, b'')
 
         # check db
-        order_obj = Order.objects.filter(id=order_id).first()
+        order_obj: None = Order.objects.filter(id=order_id).first()
         self.assertIsNone(order_obj)
 
         for product in products:
             product_updated = Product.objects.get(id=product.id)
             product_order = next((p for p in self.products if p['id'] == str(product.id)), None)
 
-            self.assertEqual(product_updated.stock, product_order['stock'])
+            self.assertIsNotNone(product_order)
+            self.assertEqual(product_updated.stock, product_order['stock'])  # type: ignore
 
         for order_detail in order_details:
             order_detail_obj = OrderDetail.objects.filter(id=order_detail.id).first()
             self.assertIsNone(order_detail_obj)
 
-    def test_get_order_details(self):
+    def test_get_order_details(self) -> None:
         # send order
-        resp_data = self._create_order()
-        order_id = resp_data['id']
+        resp_order_data = self._create_order()
+        order_id = resp_order_data['id']
 
         # send request
         client = APIClient()
@@ -212,7 +188,8 @@ class OrderTestCase(TestCase):
 
         resp_data = response.json()
         self.assertEqual(len(resp_data), len(self.new_order))
-        self.assertTrue(all(detail['order'] == order_id for detail in resp_data))
+
+        self.assertTrue(all((item['order'] == order_id) for item in resp_data))
 
         # check db
         order = Order.objects.get(id=order_id)
@@ -226,9 +203,9 @@ class OrderTestCase(TestCase):
         for detail in resp_data:
             order_detail = OrderDetail.objects.filter(id=detail['id']).first()
             self.assertIsNotNone(order_detail)
-            self.assertEqual(detail['cuantity'], order_detail.cuantity)
+            self.assertEqual(detail['cuantity'], order_detail.cuantity)  # type: ignore
 
-    def test_list_orders(self):
+    def test_list_orders(self) -> None:
         # send orders
         orders_number = 5
         orders = [self._create_order()['id'] for _ in range(orders_number)]

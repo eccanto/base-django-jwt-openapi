@@ -1,0 +1,24 @@
+django==4.0
+django-money==2.1
+djangorestframework==3.13.1
+pyyaml==6.0
+uritemplate==4.1.1
+djangorestframework-simplejwt==5.0.0
+PyJWT==2.3.0
+requests==2.26.0
+prospector==1.5.1
+isort==5.9.2
+astroid==2.9.0
+black==21.11b1
+bandit==1.7.1
+mypy==0.930
+pyroma==3.2
+pylint==2.12.2
+pylint-django==2.4.4
+psycopg2-binary==2.9.2
+django-stubs==1.9.0
+types-requests==2.26.2
+types-six==1.16.3
+# djangorestframework-stubs: master commit on Nov 3, 2021 > 1.4.0, fix: views -> versioning_class
+git+https://github.com/typeddjango/djangorestframework-stubs.git@e41b53d3efa3c163c7aeba9a1568f1029b878a9e
+types-jwt==0.1.3

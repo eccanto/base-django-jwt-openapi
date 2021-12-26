@@ -1,4 +1,5 @@
 import uuid
+from typing import Any, Dict, Tuple
 
 from django.db import models, transaction
 from djmoney.models.fields import MoneyField
@@ -17,7 +18,7 @@ class Order(models.Model):
     class Meta:
         ordering = ['date_time']
 
-    def delete(self, *args, **kwargs):
+    def delete(self, using: Any = None, keep_parents: bool = False) -> Tuple[int, Dict[str, int]]:
         with transaction.atomic():
             for order_detail in self.orderdetail_set.all():
                 order_detail.product.stock += order_detail.cuantity
@@ -25,7 +26,7 @@ class Order(models.Model):
 
                 order_detail.delete()
 
-        super().delete(*args, **kwargs)
+        return super().delete(using, keep_parents)
 
 
 class OrderDetail(models.Model):

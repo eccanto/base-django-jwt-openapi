@@ -22,14 +22,14 @@ class OrderDetailSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class ApiOrderSerializer(serializers.Serializer):
+class ApiOrderSerializer(serializers.ModelSerializer):
     cuantity = serializers.IntegerField(required=True, min_value=0)
     product = serializers.CharField(required=True, max_length=36)
 
 
-class ApiProductsOrderSerializer(serializers.Serializer):
+class ApiProductsOrderSerializer(serializers.ModelSerializer):
     products = ApiOrderSerializer(many=True, required=True)
 
 
-class ApiTotalMoneySerializer(serializers.Serializer):
+class ApiTotalMoneySerializer(serializers.ModelSerializer):
     total = MoneyField(max_digits=14, decimal_places=2)

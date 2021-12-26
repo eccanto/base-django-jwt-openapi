@@ -1,4 +1,5 @@
-"""ASGI config for service project.
+"""
+ASGI config for service project.
 
 It exposes the ASGI callable as a module-level variable named ``application``.
 

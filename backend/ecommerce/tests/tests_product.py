@@ -1,53 +1,15 @@
 from decimal import Decimal
+from typing import Dict, List, Union
 
-from django.contrib.auth.models import User
-from django.test import TestCase
 from rest_framework import status
 from rest_framework.test import APIClient
 
 from ecommerce.models import Product
+from ecommerce.tests.base_api_testcase import BaseApiTestCase
 
 
-class ProductTestCase(TestCase):
-    def setUp(self):
-        self.username = 'testing_product_usernamme'
-        self.password = 'testing_product_password'
-        self.api_version = 'v1'
-
-        user = User(
-            email='test@test.com',
-            first_name='Testing',
-            last_name='Testing',
-            username=self.username
-        )
-        user.set_password(self.password)
-        user.save()
-
-        self.user = user
-
-        client = APIClient()
-        response = client.post(
-            '/api/token/',
-            {'username': self.username, 'password': self.password},
-            format='json'
-        )
-
-        self.access_token = response.json()['access']
-
-    def _create_product(self, **kwargs):
-        client = APIClient()
-        client.credentials(HTTP_AUTHORIZATION=f'Bearer {self.access_token}')
-
-        response = client.post(
-            f'/api/{self.api_version}/product/',
-            kwargs,
-            format='json'
-        )
-
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        return response.json()
-
-    def test_create_product(self):
+class ProductTestCase(BaseApiTestCase):
+    def test_create_product(self) -> None:
         resp_data = self._create_product(name='test 1', price='599', stock=60)
 
         # check response
@@ -67,14 +29,14 @@ class ProductTestCase(TestCase):
         self.assertEqual(Decimal(resp_data['price']), product_obj.price.amount)
         self.assertEqual(resp_data['stock'], product_obj.stock)
 
-    def test_update_product_put(self):
+    def test_update_product_put(self) -> None:
         client = APIClient()
         client.credentials(HTTP_AUTHORIZATION=f'Bearer {self.access_token}')
 
         product_id = self._create_product(name='test 2', price='599', stock=60)['id']
 
         # request
-        update_data = {
+        update_data: Dict[str, Union[str, int]] = {
             'name': 'test 2 - update',
             'price': '200',
             'stock': 20
@@ -111,7 +73,7 @@ class ProductTestCase(TestCase):
         self.assertEqual(Decimal(update_data['price']), product_obj.price.amount)
         self.assertEqual(update_data['stock'], product_obj.stock)
 
-    def test_update_product_patch(self):
+    def test_update_product_patch(self) -> None:
         client = APIClient()
         client.credentials(HTTP_AUTHORIZATION=f'Bearer {self.access_token}')
 
@@ -151,7 +113,7 @@ class ProductTestCase(TestCase):
 
         self.assertEqual(update_data['stock'], product_obj.stock)
 
-    def test_delete_product(self):
+    def test_delete_product(self) -> None:
         client = APIClient()
         client.credentials(HTTP_AUTHORIZATION=f'Bearer {self.access_token}')
 
@@ -168,11 +130,11 @@ class ProductTestCase(TestCase):
         product_obj = Product.objects.filter(id=product_id).first()
         self.assertIsNone(product_obj)
 
-    def test_get_product(self):
+    def test_get_product(self) -> None:
         client = APIClient()
         client.credentials(HTTP_AUTHORIZATION=f'Bearer {self.access_token}')
 
-        product_data = {
+        product_data: Dict[str, Union[str, int]] = {
             'name': 'test 4',
             'price': '701',
             'stock': 22
@@ -185,7 +147,7 @@ class ProductTestCase(TestCase):
         # check response
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-        resp_data = response.json()
+        resp_data: Dict[str, Union[str, int]] = response.json()
 
         self.assertEqual(len(resp_data), 5)
         self.assertIn('id', resp_data)
@@ -198,11 +160,11 @@ class ProductTestCase(TestCase):
         self.assertEqual(Decimal(resp_data['price']), Decimal(product_data['price']))
         self.assertEqual(resp_data['stock'], product_data['stock'])
 
-    def test_get_products(self):
+    def test_get_products(self) -> None:
         client = APIClient()
         client.credentials(HTTP_AUTHORIZATION=f'Bearer {self.access_token}')
 
-        products = [
+        products: List[Dict[str, Union[str, int]]] = [
             {
                 'name': 'test 5',
                 'price': '705',

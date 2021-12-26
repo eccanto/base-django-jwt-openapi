@@ -17,6 +17,11 @@ skip = [
 ]
 
 [tool.mypy]
+plugins = [
+    "mypy_django_plugin.main",
+    "mypy_drf_plugin.main"
+]
+
 # already tested by pylint
 disable_error_code = "no-redef"
 
@@ -34,12 +39,15 @@ warn_unused_ignores = true
 no_implicit_reexport = true
 strict_equality = true
 
-[tool.pylint.MASTER]
+[tool.django-stubs]
+django-settings-module = "service.settings"
+
+[tool.pylint.master]
 load-plugins = "pylint_django"
+init-hook = "import os, sys; sys.path.insert(0, os.path.abspath('.'))"
+django-settings-module = "service.settings"
 
-init-hook='import sys; sys.path.append(".")'
-
-[tool.pylint.BASIC]
+[tool.pylint.basic]
 good-names = [
     "i",
     "j",
@@ -48,7 +56,7 @@ good-names = [
     "ys"
 ]
 
-[tool.pylint.'MESSAGES CONTROL']
+[tool.pylint.messages_control]
 disable = [
     "locally-disabled",
     "missing-class-docstring",

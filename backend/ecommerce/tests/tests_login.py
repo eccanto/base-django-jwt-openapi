@@ -1,5 +1,7 @@
+from typing import Any, Dict
+
 import jwt
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User  # pylint: disable=imported-auth-user
 from django.test import TestCase
 from rest_framework import status
 from rest_framework.test import APIClient
@@ -8,7 +10,7 @@ from service import settings
 
 
 class LoginTestCase(TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         self.username = 'testing_login_usernamme'
         self.password = 'testing_login_password'
 
@@ -23,7 +25,7 @@ class LoginTestCase(TestCase):
 
         self.user = user
 
-    def _api_login(self, username, password, expected_code):
+    def _api_login(self, username: str, password: str, expected_code: int) -> Dict[str, Any]:
         client = APIClient()
         response = client.post(
             '/api/token/',
@@ -34,7 +36,7 @@ class LoginTestCase(TestCase):
         self.assertEqual(response.status_code, expected_code)
         return response.json()
 
-    def test_get_jwt_token_ok(self):
+    def test_get_jwt_token_ok(self) -> None:
         data = self._api_login(self.username, self.password, status.HTTP_200_OK)
         self.assertEqual(len(data), 2)
         self.assertIn('refresh', data)
@@ -47,7 +49,7 @@ class LoginTestCase(TestCase):
         self.assertEqual(jwt_decoded['token_type'], 'access')
         self.assertEqual(jwt_decoded['user_id'], self.user.id)
 
-    def test_get_jwt_token_invalid_username(self):
+    def test_get_jwt_token_invalid_username(self) -> None:
         invalid_username = self.username + '_invalid'
 
         data = self._api_login(invalid_username, self.username, status.HTTP_401_UNAUTHORIZED)
@@ -55,7 +57,7 @@ class LoginTestCase(TestCase):
         self.assertIn('detail', data)
         self.assertEqual(data['detail'], 'No active account found with the given credentials')
 
-    def test_get_jwt_token_invalid_password(self):
+    def test_get_jwt_token_invalid_password(self) -> None:
         invalid_password = self.password + '_invalid'
 
         data = self._api_login(self.username, invalid_password, status.HTTP_401_UNAUTHORIZED)
